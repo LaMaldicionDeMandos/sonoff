@@ -5,6 +5,7 @@
 
 #define L 1
 #define H 0
+#define SPEED 115200
 
 #define ROM_MEMORY_SIZE 512
 #define MODE_ADDRESS 0x0
@@ -43,7 +44,7 @@ void printCurrentMode(mode_t mode) {
 }
 
 /* Pairing mode Function ***************/
-void pairingModeLoop() {
+void stateOutputPairingMode() {
   digitalWrite(LED_BUILTIN, L);
   delay(2000);
   digitalWrite(LED_BUILTIN, H);
@@ -56,8 +57,10 @@ void pairingModeLoop() {
   delay(500);
   digitalWrite(LED_BUILTIN, H);  
   delay(500);                 
-  digitalWrite(LED_BUILTIN, L);
-  printCurrentMode(mode);
+  digitalWrite(LED_BUILTIN, L);  
+}
+void pairingModeLoop() {
+  stateOutputPairngMode();
 }
 
 /* Main loop functions ****************/
@@ -72,7 +75,7 @@ void setup() {
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
   EEPROM.begin(ROM_MEMORY_SIZE);
-  Serial.begin(115200);
+  Serial.begin(SPEED);
   Serial.println();
   setupMode();
   digitalWrite(LED_BUILTIN, L);
@@ -81,4 +84,5 @@ void setup() {
 void loop() {
   ModeFunction modeLoop = selectMode(mode);
   modeLoop();
+  printCurrentMode(mode);
 }
