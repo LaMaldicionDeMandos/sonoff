@@ -1,5 +1,7 @@
-
 #include <EEPROM.h>
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
 
 #define mode_t uint8_t
 
@@ -16,9 +18,18 @@
 
 #define PAIRING_MODE 1
 
+/* PAIRING DEFINITIONS ************************/
+#ifndef APSSID
+#define APSSID "Argensonoff"
+#define APPSK ""
+#define PAIRING_SERVER_PORT 80
+#endif
+
 typedef void (*ModeFunction)();
 
 mode_t mode = 1;
+
+ESP8266WebServer server(PAIRING_SERVER_PORT);
 
 /* Util functions ********************/
 uint8_t readValueFromEEPROM(int address) {
@@ -31,14 +42,43 @@ void saveValueToEEPROM(int address, uint8_t value) {
 }
 
 /* Setup Functions *****************/
+void handleRoot() {
+  server.send(200, "text/html", "<h1>You are connected</h1>");
+}
+void setupParingMode() {
+  WiFi.softAP(APSSID, APPSK);
+
+  IPAddress myIP = WiFi.softAPIP();
+  Serial.print("AP IP address: ");
+  Serial.println(myIP);
+  server.on("/", handleRoot);
+  server.begin();
+  Serial.println("HTTP server started");  
+}
 bool isValidMode(mode_t mode) {
   return mode == PAIRING_MODE;
 }
 
-void setupMode() {
+ModeFunction setupMode() {
+  ModeFunction modeSetup = &setupParingMode;
   mode = readValueFromEEPROM(MODE_ADDRESS);
   if (!isValidMode(mode)) mode = PAIRING_MODE;
   saveValueToEEPROM(MODE_ADDRESS, mode);
+  return modeSetup;
+}
+
+void setupMemory() {
+  EEPROM.begin(ROM_MEMORY_SIZE);
+}
+
+void setupOutput() {
+  pinMode(STATE_OUTPUT_RED_PIN, OUTPUT);
+  pinMode(STATE_OUTPUT_GREEN_PIN, OUTPUT);
+  pinMode(STATE_OUTPUT_BLUE_PIN, OUTPUT);
+  
+  digitalWrite(STATE_OUTPUT_RED_PIN, L);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
 }
 
 void printCurrentMode(mode_t mode) {
@@ -67,6 +107,7 @@ void stateOutputPairingMode() {
 }
 void pairingModeLoop() {
   stateOutputPairingMode();
+  server.handleClient();
 }
 
 /* Main loop functions ****************/
@@ -79,16 +120,10 @@ ModeFunction selectMode(mode_t mode) {
 
 void setup() {
   delay(1000);
-  pinMode(STATE_OUTPUT_RED_PIN, OUTPUT);
-  pinMode(STATE_OUTPUT_GREEN_PIN, OUTPUT);
-  pinMode(STATE_OUTPUT_BLUE_PIN, OUTPUT);
-  EEPROM.begin(ROM_MEMORY_SIZE);
   Serial.begin(SPEED);
-  Serial.println();
-  setupMode();
-  digitalWrite(STATE_OUTPUT_RED_PIN, L);
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
+  setupOutput();
+  ModeFunction setupFunction = setupMode();
+  setupFunction();
 }
 
 void loop() {
