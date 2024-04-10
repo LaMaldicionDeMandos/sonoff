@@ -3,12 +3,16 @@
 
 #define mode_t uint8_t
 
-#define L 1
-#define H 0
+#define L 0x0
+#define H 0x1
 #define SPEED 115200
 
 #define ROM_MEMORY_SIZE 512
 #define MODE_ADDRESS 0x0
+
+#define STATE_OUTPUT_RED_PIN 5 //D1
+#define STATE_OUTPUT_GREEN_PIN 4 //D2
+#define STATE_OUTPUT_BLUE_PIN 14 //D5
 
 #define PAIRING_MODE 1
 
@@ -45,22 +49,24 @@ void printCurrentMode(mode_t mode) {
 
 /* Pairing mode Function ***************/
 void stateOutputPairingMode() {
-  digitalWrite(LED_BUILTIN, L);
+  digitalWrite(STATE_OUTPUT_RED_PIN, L);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
   delay(2000);
-  digitalWrite(LED_BUILTIN, H);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, H);
+  
   delay(100);
-  digitalWrite(LED_BUILTIN, L);
+   digitalWrite(STATE_OUTPUT_BLUE_PIN, L); 
   delay(100);                      
-  digitalWrite(LED_BUILTIN, H);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, H);
   delay(100);
-  digitalWrite(LED_BUILTIN, L);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, L); 
   delay(500);
-  digitalWrite(LED_BUILTIN, H);  
-  delay(500);                 
-  digitalWrite(LED_BUILTIN, L);  
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, H);    
+  delay(500);                   
 }
 void pairingModeLoop() {
-  stateOutputPairngMode();
+  stateOutputPairingMode();
 }
 
 /* Main loop functions ****************/
@@ -73,12 +79,16 @@ ModeFunction selectMode(mode_t mode) {
 
 void setup() {
   delay(1000);
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(STATE_OUTPUT_RED_PIN, OUTPUT);
+  pinMode(STATE_OUTPUT_GREEN_PIN, OUTPUT);
+  pinMode(STATE_OUTPUT_BLUE_PIN, OUTPUT);
   EEPROM.begin(ROM_MEMORY_SIZE);
   Serial.begin(SPEED);
   Serial.println();
   setupMode();
-  digitalWrite(LED_BUILTIN, L);
+  digitalWrite(STATE_OUTPUT_RED_PIN, L);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
 }
 
 void loop() {
