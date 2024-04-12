@@ -2,6 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
+#include "asyncTask.h"
 
 #define mode_t uint8_t
 
@@ -28,6 +29,8 @@
 typedef void (*ModeFunction)();
 
 mode_t mode = 1;
+
+AsyncTask* task;
 
 ESP8266WebServer server(PAIRING_SERVER_PORT);
 
@@ -118,16 +121,29 @@ ModeFunction selectMode(mode_t mode) {
   return 0;
 }
 
+void test() {
+  Serial.println("TASK TEST");
+}
+
 void setup() {
   delay(1000);
   Serial.begin(SPEED);
   setupOutput();
   ModeFunction setupFunction = setupMode();
   setupFunction();
+  task = new AsyncTask(5000, test);
+  task->start();
 }
 
 void loop() {
   ModeFunction modeLoop = selectMode(mode);
   modeLoop();
   printCurrentMode(mode);
+  if (task) {
+    task->update();
+    if (task->isFinished()) {
+      delete task;
+      task = nullptr;
+    }
+  }
 }
