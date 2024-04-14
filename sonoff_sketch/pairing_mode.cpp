@@ -39,7 +39,7 @@ void PairingMode::initLoop() {
   AsyncTask* off200 = new AsyncTask(100, off);
   AsyncTask* on300 = new AsyncTask(100, on);
   AsyncTask* off400 = new AsyncTask(100, off);
-  AsyncTask* on500 = new AsyncTask(100, on);
+  AsyncTask* on500 = new AsyncTask(200, on);
   AsyncTask* off1000 = new AsyncTask(500, off);
   AsyncTask* wait1400 = new AsyncTask(400, wait);
 
