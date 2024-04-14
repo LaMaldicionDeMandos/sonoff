@@ -1,5 +1,7 @@
 #include "pairing_mode.h"
 
+ESP8266WebServer server(PAIRING_SERVER_PORT);
+
 void on() {
   digitalWrite(STATE_OUTPUT_BLUE_PIN, H);
 }
@@ -10,10 +12,22 @@ void off() {
 
 void wait() {}
 
+void handleRoot() {
+  server.send(200, "text/html", "<h1>You are connected</h1>");
+}
+
 PairingMode::PairingMode() {}
 
 void PairingMode::setup() {
   Serial.println("Setup Pairing Mode");
+  WiFi.softAP(APSSID, APPSK);
+
+  IPAddress myIP = WiFi.softAPIP();
+  Serial.print("AP IP address: ");
+  Serial.println(myIP);
+  server.on("/", handleRoot);
+  server.begin();
+  Serial.println("HTTP server started");
 }
 
 void PairingMode::initLoop() {
@@ -43,5 +57,5 @@ void PairingMode::initLoop() {
 void PairingMode::loop() {
   if(this->task != nullptr) this->task = this->task->update(); 
   else this->initLoop();
-
+  server.handleClient();
 }
