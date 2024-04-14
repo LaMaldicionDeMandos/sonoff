@@ -2,20 +2,15 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
-#include "asyncTask.h"
+#include "board_constants.h"
+#include "pairing_mode.h"
 
 #define mode_t uint8_t
 
-#define L 0x0
-#define H 0x1
 #define SPEED 115200
 
 #define ROM_MEMORY_SIZE 512
 #define MODE_ADDRESS 0x0
-
-#define STATE_OUTPUT_RED_PIN 5 //D1
-#define STATE_OUTPUT_GREEN_PIN 4 //D2
-#define STATE_OUTPUT_BLUE_PIN 14 //D5
 
 #define PAIRING_MODE 1
 
@@ -26,11 +21,10 @@
 #define PAIRING_SERVER_PORT 80
 #endif
 
-typedef void (*ModeFunction)();
-
 mode_t mode = 1;
 
-AsyncTask* task;
+PairingMode pairingMode;
+SonoffMode* currentMode;
 
 ESP8266WebServer server(PAIRING_SERVER_PORT);
 
@@ -62,8 +56,8 @@ bool isValidMode(mode_t mode) {
   return mode == PAIRING_MODE;
 }
 
-ModeFunction setupMode() {
-  ModeFunction modeSetup = &setupParingMode;
+SonoffMode* setupMode() {
+  SonoffMode* modeSetup = &pairingMode;
   mode = readValueFromEEPROM(MODE_ADDRESS);
   if (!isValidMode(mode)) mode = PAIRING_MODE;
   saveValueToEEPROM(MODE_ADDRESS, mode);
@@ -84,66 +78,31 @@ void setupOutput() {
   digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
 }
 
-void printCurrentMode(mode_t mode) {
-  if (PAIRING_MODE == mode) {
-    Serial.println("PAIRING MODE...");
-  }
-}
-
-/* Pairing mode Function ***************/
-void stateOutputPairingMode() {
-  digitalWrite(STATE_OUTPUT_RED_PIN, L);
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
-  delay(2000);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, H);
-  
-  delay(100);
-   digitalWrite(STATE_OUTPUT_BLUE_PIN, L); 
-  delay(100);                      
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, H);
-  delay(100);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, L); 
-  delay(500);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, H);    
-  delay(500);                   
-}
+/*
 void pairingModeLoop() {
   stateOutputPairingMode();
   server.handleClient();
 }
+*/
 
 /* Main loop functions ****************/
-ModeFunction selectMode(mode_t mode) {
+SonoffMode* selectMode(mode_t mode) {
   if (PAIRING_MODE == mode) {
-    return &pairingModeLoop;
+    return &pairingMode;
   }
-  return 0;
-}
-
-void test() {
-  Serial.println("TASK TEST");
+  return nullptr;
 }
 
 void setup() {
   delay(1000);
   Serial.begin(SPEED);
   setupOutput();
-  ModeFunction setupFunction = setupMode();
-  setupFunction();
-  task = new AsyncTask(5000, test);
-  task->start();
+  currentMode = setupMode();
+  currentMode->setup();
 }
 
 void loop() {
-  ModeFunction modeLoop = selectMode(mode);
-  modeLoop();
-  printCurrentMode(mode);
-  if (task) {
-    task->update();
-    if (task->isFinished()) {
-      delete task;
-      task = nullptr;
-    }
+  if (currentMode != nullptr) {
+    currentMode->loop();
   }
 }

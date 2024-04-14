@@ -10,18 +10,21 @@ typedef void (*TaskFunction)();
 
 class AsyncTask {
 public:
-  AsyncTask(uint8_t delay, TaskFunction func);
+  AsyncTask(uint64_t delay, TaskFunction func);
 
 private:
-  uint8_t delay;
-  uint8_t startTime;
+  uint64_t delay;
+  uint64_t startTime;
   TaskFunction func;
-  bool active;
+  AsyncTask* next;
+
+protected:
+  void start(uint64_t currentTime);
 
 public:
   void start();
-  void update();
-  bool isFinished();
+  AsyncTask* update();
+  AsyncTask* concat(AsyncTask* task);
 };
 
 #endif //ASYNC_TASK_H

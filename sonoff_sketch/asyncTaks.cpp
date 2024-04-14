@@ -1,23 +1,36 @@
 #include "asyncTask.h"
 
-AsyncTask::AsyncTask(uint8_t delay, TaskFunction func) {
+AsyncTask::AsyncTask(uint64_t delay, TaskFunction func) {
   this->delay = delay;
   this->func = func;
-  this->active = true;
+  this->next = nullptr;
+}
+
+void AsyncTask::start(uint64_t currentTime) {
+  this->startTime = currentTime;
 }
 
 void AsyncTask::start() {
-  this->startTime = millis();
+  this->start(millis());
 }
 
-void AsyncTask::update() {
-  if (this-> active == false) return;
-  uint8_t current = millis();
-  if ((this->startTime - current) > this->delay) {
+AsyncTask* AsyncTask::update() {
+  uint64_t current = millis();
+  if ((current - this->startTime) >= this->delay) {
     this->func();
-    this->active = false;
+    if (next) {
+      this->next->start(this->startTime + this->delay);
+      AsyncTask* n = this->next;
+      delete this;
+      return n;
+    } else {
+      return nullptr;
+    }
   }
+  return this;
 }
-bool AsyncTask::isFinished() {
-  return !(this->active);
+
+AsyncTask* AsyncTask::concat(AsyncTask* task) {
+  this->next = task;
+  return this;
 }
