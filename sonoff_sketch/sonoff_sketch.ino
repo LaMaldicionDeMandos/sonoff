@@ -24,6 +24,7 @@ bool isValidMode(mode_t mode) {
 SonoffMode* setupMode() {
   SonoffMode* modeSetup = &pairingMode;
   mode = persistenceService.readMode();
+  Serial.println("Saved Mode: " + String(mode));
   if (!isValidMode(mode)) mode = PAIRING_MODE;
   persistenceService.saveMode(mode);
   return modeSetup;
@@ -50,6 +51,7 @@ void setup() {
   delay(1000);
   Serial.begin(SPEED);
   setupOutput();
+  setupMemory();
   currentMode = setupMode();
   currentMode->setup();
   switchManager.setup();

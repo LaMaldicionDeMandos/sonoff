@@ -1,5 +1,6 @@
 #ifndef PERSISTEN_SERVICE_H
 #define PERSISTEN_SERVICE_H
+#include <arduino.h>
 
 #include <EEPROM.h>
 

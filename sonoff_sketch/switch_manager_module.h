@@ -7,6 +7,9 @@
 #include "board_constants.h"
 #include "persisten_service.h"
 
+#define MAX_BOUND 5
+#define MIN_BOUND 0
+
 using namespace std;
 
 class SwitchManager {
@@ -17,9 +20,16 @@ private:
   PersistenceService persistenceService;
   uint8_t switchValue;
   uint8_t buttonPressed;
+  uint8_t buttonState;
 
 public:
   void setup();
   void loop();
+
+private:
+  void toogle();
+  void updateButtonStatus();
+  boolean isPushed();
+  boolean isNotPushed();
 };
 #endif //SWITCh_MANAGER_MODULE_H
