@@ -10,4 +10,7 @@ using namespace std;
 #define STATE_OUTPUT_GREEN_PIN 4 //D2
 #define STATE_OUTPUT_BLUE_PIN 14 //D5
 
+#define RELAY_STATE_PIN 13 //D7
+#define RELAY_SWITCH_PIN 12 //D6
+
 #endif //BOARD_CONSTANTS_H

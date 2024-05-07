@@ -1,6 +1,7 @@
 #include "board_constants.h"
 #include "pairing_mode.h"
 #include "persisten_service.h"
+#include "switch_manager_module.h"
 
 #define mode_t uint8_t
 
@@ -9,6 +10,7 @@
 #define PAIRING_MODE 1
 
 PersistenceService persistenceService;
+SwitchManager switchManager = SwitchManager(persistenceService);
 
 mode_t mode = PAIRING_MODE;
 
@@ -35,6 +37,9 @@ void setupOutput() {
   pinMode(STATE_OUTPUT_RED_PIN, OUTPUT);
   pinMode(STATE_OUTPUT_GREEN_PIN, OUTPUT);
   pinMode(STATE_OUTPUT_BLUE_PIN, OUTPUT);
+
+  pinMode(RELAY_STATE_PIN, OUTPUT);
+  pinMode(RELAY_SWITCH_PIN, INPUT);
   
   digitalWrite(STATE_OUTPUT_RED_PIN, L);
   digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
@@ -47,10 +52,12 @@ void setup() {
   setupOutput();
   currentMode = setupMode();
   currentMode->setup();
+  switchManager.setup();
 }
 
 void loop() {
   if (currentMode != nullptr) {
     currentMode->loop();
   }
+  switchManager.loop();
 }

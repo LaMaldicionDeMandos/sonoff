@@ -20,3 +20,11 @@ uint8_t PersistenceService::readMode() {
 void PersistenceService::saveMode(uint8_t mode) {
   saveByteToEEPROM(MODE_ADDRESS, mode);
 }
+
+uint8_t PersistenceService::readSwitch() {
+  return readByteFromEEPROM(SWITCH_ADDRESS);
+}
+
+void PersistenceService::saveSwitch(uint8_t value) {
+  saveByteToEEPROM(SWITCH_ADDRESS, value);
+}
