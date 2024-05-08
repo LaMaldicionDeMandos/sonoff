@@ -8,13 +8,15 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
+#include <ArduinoJson.h>
+
 #include "asyncTask.h"
 #include "sonoff_mode.h"
 #include "board_constants.h"
 
 using namespace std;
 
-#define APSSID "Argensonoff"
+#define APSSID "IoTProject"
 #define APPSK ""
 #define PAIRING_SERVER_PORT 80
 

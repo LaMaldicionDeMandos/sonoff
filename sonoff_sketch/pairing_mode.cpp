@@ -1,3 +1,4 @@
+#include "ESP8266WebServer.h"
 #include "pairing_mode.h"
 
 ESP8266WebServer server(PAIRING_SERVER_PORT);
@@ -13,7 +14,18 @@ void off() {
 void wait() {}
 
 void handleRoot() {
-  server.send(200, "text/html", "<h1>You are connected</h1>");
+  const HTTPMethod method = server.method();
+  if (method == HTTPMethod::HTTP_POST) {
+    const String body = server.arg("plain");
+    JsonDocument doc;
+    deserializeJson(doc, body);
+    Serial.println(body);
+    String ssid = doc["ssid"];
+    Serial.println("ssid: " + ssid);
+    server.send(201, "text/html", "<h1>Bien!! mandaste un post</h1>");
+  } else {
+    server.send(400, "text/html", "<h1>Noooo, tenes que mandar un post</h1>");
+  }
 }
 
 PairingMode::PairingMode() {}

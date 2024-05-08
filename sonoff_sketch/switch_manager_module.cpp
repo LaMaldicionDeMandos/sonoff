@@ -1,6 +1,6 @@
 #include "switch_manager_module.h"
 
-SwitchManager::SwitchManager(PersistenceService persistenceService) {
+SwitchManager::SwitchManager(PersistenceService* persistenceService) {
   this->persistenceService = persistenceService;
   this->switchValue = L;
   this->buttonPressed = L;
@@ -9,7 +9,7 @@ SwitchManager::SwitchManager(PersistenceService persistenceService) {
 
 
 void SwitchManager::setup() {
-  this->switchValue = this->persistenceService.readSwitch();
+  this->switchValue = this->persistenceService->readSwitch();
   Serial.println("Switch Value: " + String(this->switchValue));
   digitalWrite(RELAY_STATE_PIN, this->switchValue);
 }
@@ -30,7 +30,7 @@ void SwitchManager::loop() {
 void SwitchManager::toogle() {
   if (this->switchValue == L) this->switchValue = H;
   else this->switchValue = L;
-  this->persistenceService.saveSwitch(this->switchValue);
+  this->persistenceService->saveSwitch(this->switchValue);
   digitalWrite(RELAY_STATE_PIN, this->switchValue);
 }
 

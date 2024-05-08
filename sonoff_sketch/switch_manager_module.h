@@ -14,10 +14,10 @@ using namespace std;
 
 class SwitchManager {
 public:
-  SwitchManager(PersistenceService persistenceService);
+  SwitchManager(PersistenceService* persistenceService);
 
 private:
-  PersistenceService persistenceService;
+  PersistenceService* persistenceService;
   uint8_t switchValue;
   uint8_t buttonPressed;
   uint8_t buttonState;

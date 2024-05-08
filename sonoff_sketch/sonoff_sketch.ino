@@ -10,7 +10,7 @@
 #define PAIRING_MODE 1
 
 PersistenceService persistenceService;
-SwitchManager switchManager = SwitchManager(persistenceService);
+SwitchManager switchManager = SwitchManager(&persistenceService);
 
 mode_t mode = PAIRING_MODE;
 
