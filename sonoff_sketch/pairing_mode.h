@@ -13,6 +13,7 @@
 #include "asyncTask.h"
 #include "sonoff_mode.h"
 #include "board_constants.h"
+#include "persisten_service.h"
 
 using namespace std;
 
@@ -23,9 +24,10 @@ using namespace std;
 class PairingMode : public SonoffMode {
 
 public:
-  PairingMode();
+  PairingMode(PersistenceService* persistenceService);
 private:
   AsyncTask* task;
+  PersistenceService* persistenceService;
 
 public:
   void setup() override;
@@ -33,5 +35,6 @@ public:
 
 private:
   void initLoop();
+  void handleRoot();
 };
 #endif //PAIRING_MODE_H

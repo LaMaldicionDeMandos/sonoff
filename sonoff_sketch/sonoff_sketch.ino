@@ -14,7 +14,7 @@ SwitchManager switchManager = SwitchManager(&persistenceService);
 
 mode_t mode = PAIRING_MODE;
 
-PairingMode pairingMode;
+PairingMode pairingMode = PairingMode(&persistenceService);
 SonoffMode* currentMode;
 
 bool isValidMode(mode_t mode) {

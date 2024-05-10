@@ -13,22 +13,28 @@ void off() {
 
 void wait() {}
 
-void handleRoot() {
+void PairingMode::handleRoot() {
   const HTTPMethod method = server.method();
   if (method == HTTPMethod::HTTP_POST) {
     const String body = server.arg("plain");
+    this->persistenceService->saveConfig(body);
+    const String config = this->persistenceService->readConfig();
+    Serial.println(config);
+    /*
     JsonDocument doc;
     deserializeJson(doc, body);
     Serial.println(body);
     String ssid = doc["ssid"];
-    Serial.println("ssid: " + ssid);
-    server.send(201, "text/html", "<h1>Bien!! mandaste un post</h1>");
+    */
+    server.send(201, "application/json", config);
   } else {
     server.send(400, "text/html", "<h1>Noooo, tenes que mandar un post</h1>");
   }
 }
 
-PairingMode::PairingMode() {}
+PairingMode::PairingMode(PersistenceService* persistenceService) {
+  this->persistenceService = persistenceService;
+}
 
 void PairingMode::setup() {
   Serial.println("Setup Pairing Mode");
@@ -37,7 +43,7 @@ void PairingMode::setup() {
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
-  server.on("/", handleRoot);
+  server.on("/", std::bind(&PairingMode::handleRoot, this));
   server.begin();
   Serial.println("HTTP server started");
 }
