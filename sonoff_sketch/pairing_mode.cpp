@@ -1,4 +1,3 @@
-#include "ESP8266WebServer.h"
 #include "pairing_mode.h"
 
 ESP8266WebServer server(PAIRING_SERVER_PORT);
@@ -27,9 +26,11 @@ void PairingMode::handleRoot() {
     String ssid = doc["ssid"];
     */
     server.send(201, "application/json", config);
+    this->persistenceService->saveMode(WORKING_MODE);
   } else {
     server.send(400, "text/html", "<h1>Noooo, tenes que mandar un post</h1>");
   }
+
 }
 
 PairingMode::PairingMode(PersistenceService* persistenceService) {

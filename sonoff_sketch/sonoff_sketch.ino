@@ -1,5 +1,6 @@
 #include "board_constants.h"
 #include "pairing_mode.h"
+#include "working_mode.h"
 #include "persisten_service.h"
 #include "switch_manager_module.h"
 
@@ -7,26 +8,38 @@
 
 #define SPEED 115200
 
-#define PAIRING_MODE 1
-
 PersistenceService persistenceService;
 SwitchManager switchManager = SwitchManager(&persistenceService);
 
 mode_t mode = PAIRING_MODE;
 
 PairingMode pairingMode = PairingMode(&persistenceService);
+WorkingMode workingMode = WorkingMode(&persistenceService);
 SonoffMode* currentMode;
+mode_t currentModeType;
 
 bool isValidMode(mode_t mode) {
-  return mode == PAIRING_MODE;
+  return mode == PAIRING_MODE || mode == WORKING_MODE;
+}
+
+SonoffMode* selectMode(mode_t mode) {
+  SonoffMode* modeSetup = nullptr;
+  if (mode == PAIRING_MODE) modeSetup = &pairingMode;
+  if (mode == WORKING_MODE) modeSetup = &workingMode;
+  return modeSetup;
 }
 
 SonoffMode* setupMode() {
   SonoffMode* modeSetup = &pairingMode;
   mode = persistenceService.readMode();
   Serial.println("Saved Mode: " + String(mode));
-  if (!isValidMode(mode)) mode = PAIRING_MODE;
-  persistenceService.saveMode(mode);
+  if (!isValidMode(mode)) {
+    mode = PAIRING_MODE;
+    persistenceService.saveMode(mode);
+  } else {
+    modeSetup = selectMode(mode);
+  }
+  currentModeType = mode;
   return modeSetup;
 }
 
@@ -58,6 +71,11 @@ void setup() {
 }
 
 void loop() {
+  mode_t modeType = persistenceService.readMode();
+  if (currentModeType != modeType) {
+    currentMode = setupMode();
+    currentMode->setup();
+  }
   if (currentMode != nullptr) {
     currentMode->loop();
   }

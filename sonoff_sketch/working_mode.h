@@ -1,5 +1,5 @@
-#ifndef PAIRING_MODE_H
-#define PAIRING_MODE_H
+#ifndef WORKING_MODE_H
+#define WORKING_MODE_H
 
 #include <arduino.h>
 #include <stdint.h>
@@ -8,6 +8,8 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
+#include <ArduinoJson.h>
+
 #include "asyncTask.h"
 #include "sonoff_mode.h"
 #include "board_constants.h"
@@ -15,14 +17,10 @@
 
 using namespace std;
 
-#define APSSID "IoTProject"
-#define APPSK ""
-#define PAIRING_SERVER_PORT 80
-
-class PairingMode : public SonoffMode {
+class WorkingMode : public SonoffMode {
 
 public:
-  PairingMode(PersistenceService* persistenceService);
+  WorkingMode(PersistenceService* persistenceService);
 private:
   AsyncTask* task;
   PersistenceService* persistenceService;
@@ -35,4 +33,4 @@ private:
   void initLoop();
   void handleRoot();
 };
-#endif //PAIRING_MODE_H
+#endif //WORKING_MODE_H
