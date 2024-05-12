@@ -18,15 +18,12 @@ void PairingMode::handleRoot() {
     const String body = server.arg("plain");
     this->persistenceService->saveConfig(body);
     const String config = this->persistenceService->readConfig();
-    Serial.println(config);
-    /*
     JsonDocument doc;
-    deserializeJson(doc, body);
-    Serial.println(body);
-    String ssid = doc["ssid"];
-    */
-    server.send(201, "application/json", config);
+    deserializeJson(doc, config);
+    const String response = "{\n  \"udp_broadcast_port\": " + String(UDP_BROADCAST_PORT) + "\n}"; 
+    server.send(201, "application/json", response);
     this->persistenceService->saveMode(CONNECTING_MODE);
+    delay(500);
     server.close();
   } else {
     server.send(400, "text/html", "<h1>Noooo, tenes que mandar un post</h1>");

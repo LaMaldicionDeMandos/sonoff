@@ -16,4 +16,6 @@ using namespace std;
 #define RELAY_STATE_PIN 13 //D7
 #define RELAY_SWITCH_PIN 12 //D6
 
+#define UDP_BROADCAST_PORT 12357
+
 #endif //BOARD_CONSTANTS_H

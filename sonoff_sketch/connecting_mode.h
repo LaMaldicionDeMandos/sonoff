@@ -7,6 +7,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266HTTPClient.h>
+#include <ESP8266WiFiMulti.h>
 
 #include <ArduinoJson.h>
 
@@ -14,6 +15,8 @@
 #include "sonoff_mode.h"
 #include "board_constants.h"
 #include "persisten_service.h"
+
+#define BROADCAST_PORT
 
 using namespace std;
 
@@ -32,5 +35,7 @@ public:
 private:
   void initLoop();
   void handleRoot();
+  String getSSID();
+  String getPassword();
 };
 #endif //CONNECTING_MODE_H

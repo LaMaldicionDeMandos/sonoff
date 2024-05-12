@@ -31,6 +31,7 @@ SonoffMode* selectMode(mode_t mode) {
 
 SonoffMode* setupMode() {
   SonoffMode* modeSetup = &pairingMode;
+  //persistenceService.saveMode(PAIRING_MODE); //Sacar lo puse para forzar el modo pairing
   mode = persistenceService.readMode();
   Serial.println("Saved Mode: " + String(mode));
   if (!isValidMode(mode)) {

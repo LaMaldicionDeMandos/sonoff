@@ -47,12 +47,10 @@ void PersistenceService::saveSwitch(uint8_t value) {
 
 String PersistenceService::readConfig() {
   uint32_t size = readIntFromEEPROM(CONFIG_LENGTH_ADDRESS);
-  Serial.println("Config size: " + String(size));
   String text = String();
   for(uint32_t i = 0; i < size; i++) {
     text+= (char)readByteFromEEPROM(CONFIG_ADDRESS + i);
   }
-  Serial.println("Config: " + text);
   return text;
 }
 void PersistenceService::saveConfig(String config) {
