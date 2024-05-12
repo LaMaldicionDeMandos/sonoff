@@ -1,12 +1,12 @@
-#ifndef WORKING_MODE_H
-#define WORKING_MODE_H
+#ifndef CONNECTING_MODE_H
+#define CONNECTING_MODE_H
 
 #include <arduino.h>
 #include <stdint.h>
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
+#include <ESP8266HTTPClient.h>
 
 #include <ArduinoJson.h>
 
@@ -17,10 +17,10 @@
 
 using namespace std;
 
-class WorkingMode : public SonoffMode {
+class ConnectingMode : public SonoffMode {
 
 public:
-  WorkingMode(PersistenceService* persistenceService);
+  ConnectingMode(PersistenceService* persistenceService);
 private:
   AsyncTask* task;
   PersistenceService* persistenceService;
@@ -33,4 +33,4 @@ private:
   void initLoop();
   void handleRoot();
 };
-#endif //WORKING_MODE_H
+#endif //CONNECTING_MODE_H

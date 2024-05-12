@@ -26,7 +26,8 @@ void PairingMode::handleRoot() {
     String ssid = doc["ssid"];
     */
     server.send(201, "application/json", config);
-    this->persistenceService->saveMode(WORKING_MODE);
+    this->persistenceService->saveMode(CONNECTING_MODE);
+    server.close();
   } else {
     server.send(400, "text/html", "<h1>Noooo, tenes que mandar un post</h1>");
   }
