@@ -10,6 +10,8 @@
 #define MAX_BOUND 5
 #define MIN_BOUND 0
 
+#define RESET_TIME 5000
+
 using namespace std;
 
 class SwitchManager {
@@ -21,6 +23,8 @@ private:
   uint8_t switchValue;
   uint8_t buttonPressed;
   uint8_t buttonState;
+  boolean isPressed;
+  uint64_t pushedTime;
 
 public:
   void setup();

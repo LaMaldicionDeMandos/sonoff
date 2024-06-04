@@ -1,16 +1,12 @@
-#include "connecting_mode.h"
+#include "discovering_mode.h"
 
-ESP8266WiFiMulti WiFiMulti;
-
-void on_c() {
+void on_d() {
   digitalWrite(STATE_OUTPUT_GREEN_PIN, H);
 }
 
-void off_c() {
+void off_d() {
   digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
 }
-
-void wait_c() {}
 
 String getSettingProperty(PersistenceService* persistenceService, String propertyName) {
   const String networkSetting = persistenceService->readConfig();
@@ -19,23 +15,23 @@ String getSettingProperty(PersistenceService* persistenceService, String propert
   return doc[propertyName];
 }
 
-ConnectingMode::ConnectingMode(PersistenceService* persistenceService) {
+DiscoveringMode::DiscoveringMode(PersistenceService* persistenceService) {
   this->persistenceService = persistenceService;
 }
 
-String ConnectingMode::getSSID() {
+String DiscoveringMode::getSSID() {
   return getSettingProperty(this->persistenceService, "ssid");
 }
 
-String ConnectingMode::getPassword() {
+String DiscoveringMode::getPassword() {
   return getSettingProperty(this->persistenceService, "password");
 }
 
-void ConnectingMode::handleRoot() {
+void DiscoveringMode::handleRoot() {
 }
 
-void ConnectingMode::setup() {
-  Serial.println("Setup Connecting Mode");
+void DiscoveringMode::setup() {
+  Serial.println("Setup Discovering Mode");
   const String ssid = this->getSSID();
   Serial.println("SSID: " + ssid);
   const String password = this->getPassword();
@@ -46,19 +42,21 @@ void ConnectingMode::setup() {
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print('.');
     delay(500);
+    //TODO no tengo que hacer un begin, porque yo tengo que mandar Udp.begin(UDP_BROADCAST_PORT);
+    //TODO Contnuar acá, estoy siguendo el ejemplo de este sito https://esp8266-arduino-spanish.readthedocs.io/es/latest/esp8266wifi/udp-examples.html
   }
   Serial.println(WiFi.localIP());
   Serial.println(WiFi.broadcastIP());
 
 }
 
-void ConnectingMode::initLoop() {
+void DiscoveringMode::initLoop() {
   digitalWrite(STATE_OUTPUT_RED_PIN, L);
   digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
   digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
 
-  AsyncTask* on500 = new AsyncTask(500, on_c);
-  AsyncTask* off1000 = new AsyncTask(500, off_c);
+  AsyncTask* on500 = new AsyncTask(500, on_d);
+  AsyncTask* off1000 = new AsyncTask(500, off_d);
 
   on500->concat(off1000);
 
@@ -66,10 +64,14 @@ void ConnectingMode::initLoop() {
   this->task->start();  
 }
 
-void ConnectingMode::loop() {
+void DiscoveringMode::loop() {
   if(this->task != nullptr) this->task = this->task->update(); 
   else this->initLoop();
   if (WiFi.status() == WL_CONNECTED) {
   }
-  //server.handleClient();
+}
+
+void DiscoveringMode::end() {
+  Serial.println("Ending discoverying mode");
+  WiFi.disconnect();
 }

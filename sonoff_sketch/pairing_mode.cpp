@@ -22,9 +22,7 @@ void PairingMode::handleRoot() {
     deserializeJson(doc, config);
     const String response = "{\n  \"udp_broadcast_port\": " + String(UDP_BROADCAST_PORT) + "\n}"; 
     server.send(201, "application/json", response);
-    this->persistenceService->saveMode(CONNECTING_MODE);
-    delay(500);
-    server.close();
+    this->persistenceService->saveMode(DISCOVERING_MODE);
   } else {
     server.send(400, "text/html", "<h1>Noooo, tenes que mandar un post</h1>");
   }
@@ -75,4 +73,9 @@ void PairingMode::loop() {
   if(this->task != nullptr) this->task = this->task->update(); 
   else this->initLoop();
   server.handleClient();
+}
+
+void PairingMode::end() {
+  Serial.println("Ending Pairing mode");
+  server.close();
 }

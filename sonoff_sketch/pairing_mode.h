@@ -32,6 +32,7 @@ private:
 public:
   void setup() override;
   void loop() override;
+  void end() override;
 
 private:
   void initLoop();

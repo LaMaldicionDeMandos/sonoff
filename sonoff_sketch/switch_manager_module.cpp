@@ -5,6 +5,7 @@ SwitchManager::SwitchManager(PersistenceService* persistenceService) {
   this->switchValue = L;
   this->buttonPressed = L;
   this->buttonState = MIN_BOUND;
+  this->isPressed = false;
 }
 
 
@@ -18,12 +19,20 @@ void SwitchManager::loop() {
   this->updateButtonStatus();
   if (this->isPushed() && this->buttonPressed == L) {
     Serial.println("Button Pressed");
+    this->isPressed = true;
+    this->pushedTime = millis();
     this->toogle();
     this->buttonPressed = H;
   }
   if (this->isNotPushed() && this->buttonPressed == H) {
     Serial.println("Button Pulled");
     this->buttonPressed = L;
+    this->isPressed = false;
+  }
+  if (this->isPressed && (millis() > this->pushedTime + RESET_TIME)) {
+    Serial.println("RESET!!!");
+    this->persistenceService->saveMode(PAIRING_MODE);
+    this->isPressed = false;
   }
 }
 

@@ -10,6 +10,7 @@ public:
 public:
   virtual void setup() = 0;
   virtual void loop() = 0;
+  virtual void end() = 0;
 };
 
 #endif //SONOFF_MODE_H

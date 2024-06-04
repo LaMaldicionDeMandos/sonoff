@@ -1,6 +1,6 @@
 #include "board_constants.h"
 #include "pairing_mode.h"
-#include "connecting_mode.h"
+#include "discovering_mode.h"
 #include "persisten_service.h"
 #include "switch_manager_module.h"
 
@@ -14,18 +14,18 @@ SwitchManager switchManager = SwitchManager(&persistenceService);
 mode_t mode = PAIRING_MODE;
 
 PairingMode pairingMode = PairingMode(&persistenceService);
-ConnectingMode connectingMode = ConnectingMode(&persistenceService);
+DiscoveringMode discoveringMode = DiscoveringMode(&persistenceService);
 SonoffMode* currentMode;
 mode_t currentModeType;
 
 bool isValidMode(mode_t mode) {
-  return mode == PAIRING_MODE || mode == CONNECTING_MODE;
+  return mode == PAIRING_MODE || mode == DISCOVERING_MODE;
 }
 
 SonoffMode* selectMode(mode_t mode) {
   SonoffMode* modeSetup = nullptr;
   if (mode == PAIRING_MODE) modeSetup = &pairingMode;
-  if (mode == CONNECTING_MODE) modeSetup = &connectingMode;
+  if (mode == DISCOVERING_MODE) modeSetup = &discoveringMode;
   return modeSetup;
 }
 
@@ -74,6 +74,8 @@ void setup() {
 void loop() {
   mode_t modeType = persistenceService.readMode();
   if (currentModeType != modeType) {
+    currentMode->end();
+    delay(500);
     currentMode = setupMode();
     currentMode->setup();
   }

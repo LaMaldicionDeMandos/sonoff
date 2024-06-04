@@ -7,7 +7,7 @@ using namespace std;
 #define H 0x1
 
 #define PAIRING_MODE 1
-#define CONNECTING_MODE 2
+#define DISCOVERING_MODE 2
 
 #define STATE_OUTPUT_RED_PIN 5 //D1
 #define STATE_OUTPUT_GREEN_PIN 4 //D2
