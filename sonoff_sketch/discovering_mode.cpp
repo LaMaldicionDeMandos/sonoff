@@ -1,5 +1,9 @@
 #include "discovering_mode.h"
 
+WiFiUDP Udp;
+
+char packetBuffer[255];
+
 void on_d() {
   digitalWrite(STATE_OUTPUT_GREEN_PIN, H);
 }
@@ -8,8 +12,7 @@ void off_d() {
   digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
 }
 
-void sendBroadcast() {
-  Serial.println("Send Broadcast message");
+void broadcastWait() {
 }
 
 String getSettingProperty(PersistenceService* persistenceService, String propertyName) {
@@ -75,11 +78,22 @@ void DiscoveringMode::loop() {
 void DiscoveringMode::broadcastLoop() {
   if (WiFi.status() == WL_CONNECTED) {
     if(this->broadcastTask == nullptr) {
-      Serial.println("Init Broadcast sending");
-      this->broadcastTask = new AsyncTask(1000, sendBroadcast);
+      this->broadcastTask = new AsyncTask(2000, broadcastWait);
       this->broadcastTask->start();
+      Serial.println("Send Broadcast message");
+      Udp.beginPacket(WiFi.broadcastIP(), UDP_BROADCAST_PORT);
+      Udp.write("IotProject:sonoff");
+      Udp.endPacket();
+      Udp.begin(Udp.localPort());
     }  else {
       this->broadcastTask = this->broadcastTask->update();
+      if (Udp.parsePacket()) {
+        int len = Udp.read(packetBuffer, 255);
+        if (len > 0) {
+          packetBuffer[len] = 0;
+          Serial.println(packetBuffer); 
+        }
+      }
     }
   }
 }

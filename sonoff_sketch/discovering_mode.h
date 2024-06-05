@@ -38,5 +38,6 @@ private:
   String getSSID();
   String getPassword();
   void broadcastLoop();
+  void sendBroadcast();
 };
 #endif //DISCOVERING_MODE_H
