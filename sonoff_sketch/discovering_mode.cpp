@@ -8,6 +8,10 @@ void off_d() {
   digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
 }
 
+void sendBroadcast() {
+  Serial.println("Send Broadcast message");
+}
+
 String getSettingProperty(PersistenceService* persistenceService, String propertyName) {
   const String networkSetting = persistenceService->readConfig();
   JsonDocument doc;
@@ -42,8 +46,6 @@ void DiscoveringMode::setup() {
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print('.');
     delay(500);
-    //TODO no tengo que hacer un begin, porque yo tengo que mandar Udp.begin(UDP_BROADCAST_PORT);
-    //TODO Contnuar acá, estoy siguendo el ejemplo de este sito https://esp8266-arduino-spanish.readthedocs.io/es/latest/esp8266wifi/udp-examples.html
   }
   Serial.println(WiFi.localIP());
   Serial.println(WiFi.broadcastIP());
@@ -67,7 +69,18 @@ void DiscoveringMode::initLoop() {
 void DiscoveringMode::loop() {
   if(this->task != nullptr) this->task = this->task->update(); 
   else this->initLoop();
+  this->broadcastLoop();
+}
+
+void DiscoveringMode::broadcastLoop() {
   if (WiFi.status() == WL_CONNECTED) {
+    if(this->broadcastTask == nullptr) {
+      Serial.println("Init Broadcast sending");
+      this->broadcastTask = new AsyncTask(1000, sendBroadcast);
+      this->broadcastTask->start();
+    }  else {
+      this->broadcastTask = this->broadcastTask->update();
+    }
   }
 }
 

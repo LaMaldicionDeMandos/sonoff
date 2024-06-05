@@ -24,6 +24,7 @@ public:
   DiscoveringMode(PersistenceService* persistenceService);
 private:
   AsyncTask* task;
+  AsyncTask* broadcastTask;
   PersistenceService* persistenceService;
 
 public:
@@ -36,5 +37,6 @@ private:
   void handleRoot();
   String getSSID();
   String getPassword();
+  void broadcastLoop();
 };
 #endif //DISCOVERING_MODE_H
