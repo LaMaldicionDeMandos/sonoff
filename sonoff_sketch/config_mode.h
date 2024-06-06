@@ -35,5 +35,7 @@ public:
 private:
   void initLoop();
   void handleRoot();
+  String getSSID();
+  String getPassword();
 };
 #endif //CONFIG_MODE_H

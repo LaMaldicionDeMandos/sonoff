@@ -1,6 +1,6 @@
 #include "pairing_mode.h"
 
-ESP8266WebServer server(PAIRING_SERVER_PORT);
+ESP8266WebServer serverPairing(PAIRING_SERVER_PORT);
 
 void on() {
   digitalWrite(STATE_OUTPUT_BLUE_PIN, H);
@@ -13,18 +13,18 @@ void off() {
 void wait() {}
 
 void PairingMode::handleRoot() {
-  const HTTPMethod method = server.method();
+  const HTTPMethod method = serverPairing.method();
   if (method == HTTPMethod::HTTP_POST) {
-    const String body = server.arg("plain");
+    const String body = serverPairing.arg("plain");
     this->persistenceService->saveConfig(body);
     const String config = this->persistenceService->readConfig();
     JsonDocument doc;
     deserializeJson(doc, config);
     const String response = "{\n  \"udp_broadcast_port\": " + String(UDP_BROADCAST_PORT) + "\n}"; 
-    server.send(201, "application/json", response);
+    serverPairing.send(201, "application/json", response);
     this->persistenceService->saveMode(DISCOVERING_MODE);
   } else {
-    server.send(400, "text/html", "<h1>Noooo, tenes que mandar un post</h1>");
+    serverPairing.send(400, "text/html", "<h1>Noooo, tenes que mandar un post</h1>");
   }
 
 }
@@ -40,8 +40,8 @@ void PairingMode::setup() {
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
-  server.on("/", std::bind(&PairingMode::handleRoot, this));
-  server.begin();
+  serverPairing.on("/", std::bind(&PairingMode::handleRoot, this));
+  serverPairing.begin();
   Serial.println("HTTP server started");
 }
 
@@ -72,10 +72,10 @@ void PairingMode::initLoop() {
 void PairingMode::loop() {
   if(this->task != nullptr) this->task = this->task->update(); 
   else this->initLoop();
-  server.handleClient();
+  serverPairing.handleClient();
 }
 
 void PairingMode::end() {
   Serial.println("Ending Pairing mode");
-  server.close();
+  serverPairing.close();
 }
