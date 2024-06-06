@@ -1,13 +1,12 @@
-#ifndef DISCOVERING_MODE_H
-#define DISCOVERING_MODE_H
+#ifndef CONFIG_MODE_H
+#define GONFIG_MODE_H
 
 #include <arduino.h>
 #include <stdint.h>
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266HTTPClient.h>
-#include <WiFiUdp.h>
+#include <ESP8266WebServer.h>
 
 #include <ArduinoJson.h>
 
@@ -18,13 +17,14 @@
 
 using namespace std;
 
-class DiscoveringMode : public SonoffMode {
+#define CONFIG_SERVER_PORT 80
+
+class ConfigMode : public SonoffMode {
 
 public:
-  DiscoveringMode(PersistenceService* persistenceService);
+  ConfigMode(PersistenceService* persistenceService);
 private:
   AsyncTask* task;
-  AsyncTask* broadcastTask;
   PersistenceService* persistenceService;
 
 public:
@@ -35,12 +35,5 @@ public:
 private:
   void initLoop();
   void handleRoot();
-  String getSSID();
-  String getPassword();
-  void broadcastLoop();
-  void sendBroadcast();
-  void listeningAck();
-  void processAck(String message);
-  bool isACK(String message);
 };
-#endif //DISCOVERING_MODE_H
+#endif //CONFIG_MODE_H

@@ -8,6 +8,7 @@ using namespace std;
 
 #define PAIRING_MODE 1
 #define DISCOVERING_MODE 2
+#define CONFIG_MODE 3
 
 #define STATE_OUTPUT_RED_PIN 5 //D1
 #define STATE_OUTPUT_GREEN_PIN 4 //D2

@@ -1,6 +1,7 @@
 #include "board_constants.h"
 #include "pairing_mode.h"
 #include "discovering_mode.h"
+#include "config_mode.h"
 #include "persisten_service.h"
 #include "switch_manager_module.h"
 
@@ -15,23 +16,24 @@ mode_t mode = PAIRING_MODE;
 
 PairingMode pairingMode = PairingMode(&persistenceService);
 DiscoveringMode discoveringMode = DiscoveringMode(&persistenceService);
+ConfigMode configMode = ConfigMode(&persistenceService);
 SonoffMode* currentMode;
 mode_t currentModeType;
 
 bool isValidMode(mode_t mode) {
-  return mode == PAIRING_MODE || mode == DISCOVERING_MODE;
+  return mode == PAIRING_MODE || mode == DISCOVERING_MODE || mode == CONFIG_MODE;
 }
 
 SonoffMode* selectMode(mode_t mode) {
   SonoffMode* modeSetup = nullptr;
   if (mode == PAIRING_MODE) modeSetup = &pairingMode;
   if (mode == DISCOVERING_MODE) modeSetup = &discoveringMode;
+  if (mode == CONFIG_MODE) modeSetup = &configMode;
   return modeSetup;
 }
 
 SonoffMode* setupMode() {
   SonoffMode* modeSetup = &pairingMode;
-  //persistenceService.saveMode(PAIRING_MODE); //Sacar lo puse para forzar el modo pairing
   mode = persistenceService.readMode();
   Serial.println("Saved Mode: " + String(mode));
   if (!isValidMode(mode)) {

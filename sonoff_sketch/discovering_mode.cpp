@@ -101,11 +101,15 @@ void DiscoveringMode::listeningAck() {
     int len = Udp.read(packetBuffer, 255);
     if (len > 0) {
       packetBuffer[len] = 0;
-      Serial.println(packetBuffer);
-      if (isACK(packetBuffer)) {
-        Serial.println("Genial!!");
-      }
+      this->processAck(packetBuffer);
     }
+  }
+}
+
+void DiscoveringMode::processAck(String message) {
+  Serial.println(message);
+  if (isACK(packetBuffer)) {
+    this->persistenceService->saveMode(CONFIG_MODE);
   }
 }
 
