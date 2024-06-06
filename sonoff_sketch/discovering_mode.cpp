@@ -78,24 +78,39 @@ void DiscoveringMode::loop() {
 void DiscoveringMode::broadcastLoop() {
   if (WiFi.status() == WL_CONNECTED) {
     if(this->broadcastTask == nullptr) {
-      this->broadcastTask = new AsyncTask(2000, broadcastWait);
-      this->broadcastTask->start();
-      Serial.println("Send Broadcast message");
-      Udp.beginPacket(WiFi.broadcastIP(), UDP_BROADCAST_PORT);
-      Udp.write("IotProject:sonoff");
-      Udp.endPacket();
-      Udp.begin(Udp.localPort());
+        this->sendBroadcast();
     }  else {
-      this->broadcastTask = this->broadcastTask->update();
-      if (Udp.parsePacket()) {
-        int len = Udp.read(packetBuffer, 255);
-        if (len > 0) {
-          packetBuffer[len] = 0;
-          Serial.println(packetBuffer); 
-        }
+        this->listeningAck();
+    }
+  }
+}
+
+void DiscoveringMode::sendBroadcast() {
+  this->broadcastTask = new AsyncTask(2000, broadcastWait);
+  this->broadcastTask->start();
+  Serial.println("Send Broadcast message");
+  Udp.beginPacket(WiFi.broadcastIP(), UDP_BROADCAST_PORT);
+  Udp.write(BROADCAST_MESSAGE);
+  Udp.endPacket();
+  Udp.begin(Udp.localPort());
+}
+
+void DiscoveringMode::listeningAck() {
+  this->broadcastTask = this->broadcastTask->update();
+  if (Udp.parsePacket()) {
+    int len = Udp.read(packetBuffer, 255);
+    if (len > 0) {
+      packetBuffer[len] = 0;
+      Serial.println(packetBuffer);
+      if (isACK(packetBuffer)) {
+        Serial.println("Genial!!");
       }
     }
   }
+}
+
+bool DiscoveringMode::isACK(String message) {
+  return String(ACK_MESSAGE).equals(message);
 }
 
 void DiscoveringMode::end() {

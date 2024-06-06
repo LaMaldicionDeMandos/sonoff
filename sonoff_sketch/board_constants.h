@@ -17,5 +17,7 @@ using namespace std;
 #define RELAY_SWITCH_PIN 12 //D6
 
 #define UDP_BROADCAST_PORT 12357
+#define BROADCAST_MESSAGE "IotProject:sonoff"
+#define ACK_MESSAGE "ACK"
 
 #endif //BOARD_CONSTANTS_H

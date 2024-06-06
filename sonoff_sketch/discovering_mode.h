@@ -39,5 +39,7 @@ private:
   String getPassword();
   void broadcastLoop();
   void sendBroadcast();
+  void listeningAck();
+  bool isACK(String message);
 };
 #endif //DISCOVERING_MODE_H
