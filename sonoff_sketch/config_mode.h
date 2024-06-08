@@ -6,7 +6,7 @@
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
+#include <ESPAsyncWebServer.h>
 
 #include <ArduinoJson.h>
 
@@ -34,7 +34,7 @@ public:
 
 private:
   void initLoop();
-  void handleRoot();
+  void handleRoot(AsyncWebServerRequest *request);
   String getSSID();
   String getPassword();
 };

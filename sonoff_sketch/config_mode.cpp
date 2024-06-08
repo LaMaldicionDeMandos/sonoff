@@ -1,6 +1,6 @@
 #include "config_mode.h"
 
-ESP8266WebServer server(CONFIG_SERVER_PORT);
+AsyncWebServer server(CONFIG_SERVER_PORT);
 
 void wait_config_mode() {}
 
@@ -27,9 +27,9 @@ String ConfigMode::getPassword() {
   return getSettingPropertyConfigMode(this->persistenceService, "password");
 }
 
-void ConfigMode::handleRoot() {
+void ConfigMode::handleRoot(AsyncWebServerRequest *request) {
   Serial.println("llegó acá?");
-  server.send(200, "text/plain", "OK");
+  request->send(200, "text/plain", "OK");
 }
 
 ConfigMode::ConfigMode(PersistenceService* persistenceService) {
@@ -48,8 +48,9 @@ void ConfigMode::setup() {
     delay(500);
   }
   Serial.println(WiFi.localIP());
-  server.on("/healt", HTTPMethod::HTTP_GET, std::bind(&ConfigMode::handleRoot, this));
-  server.keepAlive(false);
+  server.on("/healt", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest *request) {
+    this->handleRoot(request); 
+  });
   server.begin();
   Serial.println("HTTP server started");
 }
@@ -71,10 +72,9 @@ void ConfigMode::initLoop() {
 void ConfigMode::loop() {
   if(this->task != nullptr) this->task = this->task->update(); 
   else this->initLoop();
-  server.handleClient();
 }
 
 void ConfigMode::end() {
   Serial.println("Ending Config mode");
-  server.close();
+  //TODO server.close(); no tiene close, que tengo que hacer?
 }

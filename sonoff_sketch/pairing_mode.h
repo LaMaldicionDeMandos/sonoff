@@ -6,7 +6,7 @@
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
+#include <ESPAsyncWebServer.h>
 
 #include <ArduinoJson.h>
 
@@ -36,6 +36,6 @@ public:
 
 private:
   void initLoop();
-  void handleRoot();
+  void handleRoot(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
 };
 #endif //PAIRING_MODE_H

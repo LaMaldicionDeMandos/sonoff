@@ -1,6 +1,6 @@
 #include "pairing_mode.h"
 
-ESP8266WebServer serverPairing(PAIRING_SERVER_PORT);
+AsyncWebServer serverPairing(PAIRING_SERVER_PORT);
 
 void on() {
   digitalWrite(STATE_OUTPUT_BLUE_PIN, H);
@@ -12,21 +12,21 @@ void off() {
 
 void wait() {}
 
-void PairingMode::handleRoot() {
-  const HTTPMethod method = serverPairing.method();
-  if (method == HTTPMethod::HTTP_POST) {
-    const String body = serverPairing.arg("plain");
-    this->persistenceService->saveConfig(body);
-    const String config = this->persistenceService->readConfig();
-    JsonDocument doc;
-    deserializeJson(doc, config);
-    const String response = "{\n  \"udp_broadcast_port\": " + String(UDP_BROADCAST_PORT) + "\n}"; 
-    serverPairing.send(201, "application/json", response);
-    this->persistenceService->saveMode(DISCOVERING_MODE);
-  } else {
-    serverPairing.send(400, "text/html", "<h1>Noooo, tenes que mandar un post</h1>");
+void PairingMode::handleRoot(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+  char _data[len + 1];
+  for(size_t i=0; i<len; i++){
+    _data[i] = data[i];
   }
-
+  _data[len] = 0;
+  const String body = String(_data);
+  Serial.println("Body: " + body);
+  this->persistenceService->saveConfig(body);
+  const String config = this->persistenceService->readConfig();
+  JsonDocument doc;
+  deserializeJson(doc, config);
+  const String response = "{\n  \"udp_broadcast_port\": " + String(UDP_BROADCAST_PORT) + "\n}"; 
+  request->send(201, "application/json", response);
+  this->persistenceService->saveMode(DISCOVERING_MODE);
 }
 
 PairingMode::PairingMode(PersistenceService* persistenceService) {
@@ -40,7 +40,10 @@ void PairingMode::setup() {
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
-  serverPairing.on("/", std::bind(&PairingMode::handleRoot, this));
+  serverPairing.on("/", HTTP_POST, 
+    [](AsyncWebServerRequest *request){}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    this->handleRoot(request, data, len, index, total); 
+  });
   serverPairing.begin();
   Serial.println("HTTP server started");
 }
@@ -72,10 +75,9 @@ void PairingMode::initLoop() {
 void PairingMode::loop() {
   if(this->task != nullptr) this->task = this->task->update(); 
   else this->initLoop();
-  serverPairing.handleClient();
 }
 
 void PairingMode::end() {
   Serial.println("Ending Pairing mode");
-  serverPairing.close();
+  serverPairing.end();
 }
