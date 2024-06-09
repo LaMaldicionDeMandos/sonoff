@@ -39,7 +39,7 @@ void ConfigMode::handlePost(AsyncWebServerRequest *request, uint8_t *data, size_
   const String config = this->persistenceService->readMqttConfig();
   const String response = config; 
   request->send(201, "application/json", response);
-  //this->persistenceService->saveMode(DISCOVERING_MODE);
+  this->persistenceService->saveMode(WORKING_MODE);
 }
 
 ConfigMode::ConfigMode(PersistenceService* persistenceService) {

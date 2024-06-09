@@ -2,6 +2,7 @@
 #include "pairing_mode.h"
 #include "discovering_mode.h"
 #include "config_mode.h"
+#include "working_mode.h"
 #include "persisten_service.h"
 #include "switch_manager_module.h"
 
@@ -17,11 +18,12 @@ mode_t mode = PAIRING_MODE;
 PairingMode pairingMode = PairingMode(&persistenceService);
 DiscoveringMode discoveringMode = DiscoveringMode(&persistenceService);
 ConfigMode configMode = ConfigMode(&persistenceService);
+WorkingMode workingMode = WorkingMode(&persistenceService);
 SonoffMode* currentMode;
 mode_t currentModeType;
 
 bool isValidMode(mode_t mode) {
-  return mode == PAIRING_MODE || mode == DISCOVERING_MODE || mode == CONFIG_MODE;
+  return mode == PAIRING_MODE || mode == DISCOVERING_MODE || mode == CONFIG_MODE || mode == WORKING_MODE;
 }
 
 SonoffMode* selectMode(mode_t mode) {
@@ -29,6 +31,7 @@ SonoffMode* selectMode(mode_t mode) {
   if (mode == PAIRING_MODE) modeSetup = &pairingMode;
   if (mode == DISCOVERING_MODE) modeSetup = &discoveringMode;
   if (mode == CONFIG_MODE) modeSetup = &configMode;
+  if (mode == WORKING_MODE) modeSetup = &workingMode;
   return modeSetup;
 }
 
