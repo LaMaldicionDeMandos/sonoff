@@ -13,7 +13,7 @@ void off_c() {
 }
 
 String getSettingPropertyConfigMode(PersistenceService* persistenceService, String propertyName) {
-  const String networkSetting = persistenceService->readConfig();
+  const String networkSetting = persistenceService->readNetConfig();
   JsonDocument doc;
   deserializeJson(doc, networkSetting);
   return doc[propertyName];
@@ -27,9 +27,19 @@ String ConfigMode::getPassword() {
   return getSettingPropertyConfigMode(this->persistenceService, "password");
 }
 
-void ConfigMode::handleRoot(AsyncWebServerRequest *request) {
-  Serial.println("llegó acá?");
+void ConfigMode::handleHttpHealth(AsyncWebServerRequest *request) {
   request->send(200, "text/plain", "OK");
+}
+
+void ConfigMode::handlePost(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+  Serial.println("Ejecuto el post");
+  const String body = parsePostBody(data, len);
+  Serial.println("Body: " + body);
+  this->persistenceService->saveMqttConfig(body);
+  const String config = this->persistenceService->readMqttConfig();
+  const String response = config; 
+  request->send(201, "application/json", response);
+  //this->persistenceService->saveMode(DISCOVERING_MODE);
 }
 
 ConfigMode::ConfigMode(PersistenceService* persistenceService) {
@@ -48,8 +58,12 @@ void ConfigMode::setup() {
     delay(500);
   }
   Serial.println(WiFi.localIP());
-  server.on("/healt", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest *request) {
-    this->handleRoot(request); 
+  server.on("/health", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest *request) {
+    this->handleHttpHealth(request); 
+  });
+  server.on("/", HTTP_POST, 
+    [](AsyncWebServerRequest *request){}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    this->handlePost(request, data, len, index, total); 
   });
   server.begin();
   Serial.println("HTTP server started");
@@ -76,5 +90,5 @@ void ConfigMode::loop() {
 
 void ConfigMode::end() {
   Serial.println("Ending Config mode");
-  //TODO server.close(); no tiene close, que tengo que hacer?
+  server.end();
 }

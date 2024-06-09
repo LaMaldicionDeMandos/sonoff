@@ -16,7 +16,7 @@ void broadcastWait() {
 }
 
 String getSettingProperty(PersistenceService* persistenceService, String propertyName) {
-  const String networkSetting = persistenceService->readConfig();
+  const String networkSetting = persistenceService->readNetConfig();
   JsonDocument doc;
   deserializeJson(doc, networkSetting);
   return doc[propertyName];

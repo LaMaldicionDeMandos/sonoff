@@ -14,6 +14,7 @@
 #include "sonoff_mode.h"
 #include "board_constants.h"
 #include "persisten_service.h"
+#include "utils.h"
 
 using namespace std;
 

@@ -45,7 +45,7 @@ void PersistenceService::saveSwitch(uint8_t value) {
   saveByteToEEPROM(SWITCH_ADDRESS, value);
 }
 
-String PersistenceService::readConfig() {
+String PersistenceService::readNetConfig() {
   uint32_t size = readIntFromEEPROM(CONFIG_LENGTH_ADDRESS);
   String text = String();
   for(uint32_t i = 0; i < size; i++) {
@@ -53,10 +53,30 @@ String PersistenceService::readConfig() {
   }
   return text;
 }
-void PersistenceService::saveConfig(String config) {
+void PersistenceService::saveNetConfig(String config) {
   uint32_t size = config.length();
   saveIntToEEPROM(CONFIG_LENGTH_ADDRESS, size);
   for (uint32_t i = 0; i < size; i++) {
     saveByteToEEPROM(CONFIG_ADDRESS + i, config.charAt(i));
   }
+}
+
+String PersistenceService::readMqttConfig() {
+  uint32_t netConfigSize = readIntFromEEPROM(CONFIG_LENGTH_ADDRESS);
+  uint32_t mqttConfigSize = readIntFromEEPROM(CONFIG_LENGTH_MQTT);
+  uint32_t fromAddress = CONFIG_ADDRESS + netConfigSize;
+  String text = String();
+  for(uint32_t i = 0; i < mqttConfigSize; i++) {
+    text+= (char)readByteFromEEPROM(fromAddress + i);
+  }
+  return text;
+}
+void PersistenceService::saveMqttConfig(String config) {
+    uint32_t size = config.length();
+    saveIntToEEPROM(CONFIG_LENGTH_MQTT, size);
+    uint32_t netConfigSize = readIntFromEEPROM(CONFIG_LENGTH_ADDRESS);
+    uint32_t fromAddress = CONFIG_ADDRESS + netConfigSize;
+    for (uint32_t i = 0; i < size; i++) {
+    saveByteToEEPROM(fromAddress + i, config.charAt(i));
+  } 
 }

@@ -10,7 +10,8 @@ using namespace std;
 #define MODE_ADDRESS 0x0
 #define SWITCH_ADDRESS 0x1
 #define CONFIG_LENGTH_ADDRESS 0x2
-#define CONFIG_ADDRESS 0x2 + sizeof(uint32_t)
+#define CONFIG_LENGTH_MQTT CONFIG_LENGTH_ADDRESS + sizeof(uint32_t)
+#define CONFIG_ADDRESS CONFIG_LENGTH_MQTT + sizeof(uint32_t)
 
 class PersistenceService {
 public:
@@ -31,8 +32,11 @@ public:
   uint8_t readSwitch();
   void saveSwitch(uint8_t value);
 
-  String readConfig();
-  void saveConfig(String config);
+  String readNetConfig();
+  void saveNetConfig(String config);
+
+  String readMqttConfig();
+  void saveMqttConfig(String config);
 };
 
 #endif //PERSISTEN_SERVICE_H

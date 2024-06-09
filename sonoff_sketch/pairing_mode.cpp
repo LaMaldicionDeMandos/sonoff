@@ -13,15 +13,10 @@ void off() {
 void wait() {}
 
 void PairingMode::handleRoot(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-  char _data[len + 1];
-  for(size_t i=0; i<len; i++){
-    _data[i] = data[i];
-  }
-  _data[len] = 0;
-  const String body = String(_data);
+  const String body = parsePostBody(data, len);
   Serial.println("Body: " + body);
-  this->persistenceService->saveConfig(body);
-  const String config = this->persistenceService->readConfig();
+  this->persistenceService->saveNetConfig(body);
+  const String config = this->persistenceService->readNetConfig();
   JsonDocument doc;
   deserializeJson(doc, config);
   const String response = "{\n  \"udp_broadcast_port\": " + String(UDP_BROADCAST_PORT) + "\n}"; 

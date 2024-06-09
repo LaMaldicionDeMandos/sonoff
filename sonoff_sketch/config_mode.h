@@ -14,6 +14,7 @@
 #include "sonoff_mode.h"
 #include "board_constants.h"
 #include "persisten_service.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -34,7 +35,8 @@ public:
 
 private:
   void initLoop();
-  void handleRoot(AsyncWebServerRequest *request);
+  void handleHttpHealth(AsyncWebServerRequest *request);
+  void handlePost(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
   String getSSID();
   String getPassword();
 };
