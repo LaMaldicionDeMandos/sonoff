@@ -5,11 +5,11 @@ WiFiUDP Udp;
 char packetBuffer[255];
 
 void on_d() {
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, H);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_H);
 }
 
 void off_d() {
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
 }
 
 void broadcastWait() {
@@ -56,9 +56,9 @@ void DiscoveringMode::setup() {
 }
 
 void DiscoveringMode::initLoop() {
-  digitalWrite(STATE_OUTPUT_RED_PIN, L);
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
+  digitalWrite(STATE_OUTPUT_RED_PIN, LED_L);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, LED_L);
 
   AsyncTask* on500 = new AsyncTask(500, on_d);
   AsyncTask* off1000 = new AsyncTask(500, off_d);

@@ -3,11 +3,11 @@
 AsyncWebServer serverPairing(PAIRING_SERVER_PORT);
 
 void on() {
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, H);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, LED_H);
 }
 
 void off() {
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, LED_L);
 }
 
 void wait() {}
@@ -44,9 +44,9 @@ void PairingMode::setup() {
 }
 
 void PairingMode::initLoop() {
-  digitalWrite(STATE_OUTPUT_RED_PIN, L);
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
+  digitalWrite(STATE_OUTPUT_RED_PIN, LED_L);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, LED_L);
 
   AsyncTask* on100 = new AsyncTask(100, on);
   AsyncTask* off200 = new AsyncTask(100, off);

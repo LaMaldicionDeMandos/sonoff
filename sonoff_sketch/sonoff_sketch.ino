@@ -61,9 +61,9 @@ void setupOutput() {
   pinMode(RELAY_STATE_PIN, OUTPUT);
   pinMode(RELAY_SWITCH_PIN, INPUT);
   
-  digitalWrite(STATE_OUTPUT_RED_PIN, L);
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
+  digitalWrite(STATE_OUTPUT_RED_PIN, LED_L);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, LED_L);
 }
 
 void setup() {

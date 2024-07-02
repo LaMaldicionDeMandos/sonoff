@@ -6,6 +6,9 @@ using namespace std;
 #define L 0x0
 #define H 0x1
 
+#define LED_L 0x1
+#define LED_H 0x0
+
 #define PAIRING_MODE 1
 #define DISCOVERING_MODE 2
 #define CONFIG_MODE 3
@@ -21,5 +24,8 @@ using namespace std;
 #define UDP_BROADCAST_PORT 12357
 #define BROADCAST_MESSAGE "IotProject:sonoff"
 #define ACK_MESSAGE "ACK"
+
+#define STATE_ON "on"
+#define STATE_OFF "off"
 
 #endif //BOARD_CONSTANTS_H

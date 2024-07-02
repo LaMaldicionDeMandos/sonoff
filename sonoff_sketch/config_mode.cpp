@@ -5,11 +5,11 @@ AsyncWebServer server(CONFIG_SERVER_PORT);
 void wait_config_mode() {}
 
 void on_c() {
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, H);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_H);
 }
 
 void off_c() {
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
 }
 
 String getSettingPropertyConfigMode(PersistenceService* persistenceService, String propertyName) {
@@ -70,9 +70,9 @@ void ConfigMode::setup() {
 }
 
 void ConfigMode::initLoop() {
-  digitalWrite(STATE_OUTPUT_RED_PIN, L);
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, L);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, L);
+  digitalWrite(STATE_OUTPUT_RED_PIN, LED_L);
+  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
+  digitalWrite(STATE_OUTPUT_BLUE_PIN, LED_L);
 
   AsyncTask* on700 = new AsyncTask(700, on_c);
   AsyncTask* off1400 = new AsyncTask(700, off_c);
