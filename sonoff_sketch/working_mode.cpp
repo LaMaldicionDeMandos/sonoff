@@ -4,7 +4,7 @@
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 
-void workingModeMessageCallback(char* topic, uint8_t* payload, unsigned int length) {
+void WorkingMode::onChange(char* topic, uint8_t* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
@@ -12,6 +12,14 @@ void workingModeMessageCallback(char* topic, uint8_t* payload, unsigned int leng
     Serial.print((char)payload[i]);
   }
   Serial.println();
+
+  if (length == 2 && (char)payload[0] == 'o' && (char)payload[1] == 'n') {
+    Serial.println("SET ON");
+  } else if (length == 3 && (char)payload[0] == 'o' && (char)payload[1] == 'f' && (char)payload[2] == 'f') {
+    Serial.println("SET OFF");
+  } else {
+    Serial.println("SET ERROR");
+  }
 }
 
 WorkingMode::WorkingMode(PersistenceService* persistenceService) {
@@ -72,15 +80,24 @@ void WorkingMode::configureMqtt(String config) {
   Serial.println("DeviceId: " + this->deviceId);
 
   client.setServer(mqttServerAddress.c_str(), (uint16_t)mqttServerPort);
-  client.setCallback(workingModeMessageCallback);
+  client.setCallback([this](char* topic, uint8_t* payload, unsigned int length) {
+    this->onChange(topic, payload, length);
+  });
+}
+
+void WorkingMode::sendCurrentStatus() {
+  if (client.connected()) {
+    String state = this->currentStatus ? STATE_ON : STATE_OFF;
+    client.publish(this->topicToSend.c_str(), state.c_str());
+  }
 }
 
 void WorkingMode::mqttTopicsSetup() {
-  String state = this->persistenceService->readSwitch() ? STATE_ON : STATE_OFF;
+  this->currentStatus = this->persistenceService->readSwitch();  
   this->topicToSend = "/iotProject/" + this->clientId + "/device/" + this->deviceId + "/state";
   this->topicToListen = "/iotProject/" + this->clientId + "/device/" + this->deviceId + "/set";
   client.subscribe(this->topicToListen.c_str());
-  client.publish(this->topicToSend.c_str(), state.c_str());
+  this->sendCurrentStatus();
 }
 
 void WorkingMode::reconnect() {
@@ -125,11 +142,21 @@ void WorkingMode::setup() {
   this->configureMqtt(config);
 }
 
+void WorkingMode::manageChange() {
+  uint8_t newState = this->persistenceService->readSwitch();
+  if (newState != this->currentStatus) {
+    Serial.println("Send state " + String(newState));
+    this->currentStatus = newState;
+    this->sendCurrentStatus();
+  } 
+}
+
 void WorkingMode::loop() {
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
+  this->manageChange();
 }
 
 void WorkingMode::end() {

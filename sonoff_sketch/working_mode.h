@@ -26,6 +26,7 @@ private:
   String deviceId;
   String topicToSend;
   String topicToListen;
+  uint8_t currentStatus;
 
 public:
   void setup() override;
@@ -43,5 +44,8 @@ private:
   String getDeviceId(String config);
   void reconnect();
   void mqttTopicsSetup();
+  void sendCurrentStatus();
+  void manageChange();
+  void onChange(char* topic, uint8_t* payload, unsigned int length);
 };
 #endif //WORKING_MODE_H
