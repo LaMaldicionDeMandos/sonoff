@@ -53,9 +53,15 @@ void ConfigMode::setup() {
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid.c_str(), password.c_str());
+  uint8_t ttl = 40;
   while (WiFi.status() != WL_CONNECTED) {
+    ttl--;
     Serial.print('.');
     delay(500);
+    if (!ttl) {
+      this->persistenceService->saveMode(ERROR_MODE);
+      return;
+    }
   }
   Serial.println(WiFi.localIP());
   server.on("/health", WebRequestMethod::HTTP_GET, [this](AsyncWebServerRequest *request) {

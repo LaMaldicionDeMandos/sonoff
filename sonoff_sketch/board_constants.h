@@ -13,6 +13,7 @@ using namespace std;
 #define DISCOVERING_MODE 2
 #define CONFIG_MODE 3
 #define WORKING_MODE 4
+#define ERROR_MODE 5
 
 #define STATE_OUTPUT_RED_PIN 5 //D1
 #define STATE_OUTPUT_GREEN_PIN 4 //D2

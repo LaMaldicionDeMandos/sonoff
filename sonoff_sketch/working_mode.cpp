@@ -103,8 +103,10 @@ void WorkingMode::mqttTopicsSetup() {
 }
 
 void WorkingMode::reconnect() {
+  uint8_t ttl = 5;
   // Loop until we're reconnected
   while (!client.connected()) {
+    ttl--;
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect(this->clientId.c_str())) {
@@ -118,6 +120,10 @@ void WorkingMode::reconnect() {
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
       delay(5000);
+    }
+    if (!ttl) {
+      this->persistenceService->saveMode(ERROR_MODE);
+      return;
     }
   }
 }
@@ -133,9 +139,15 @@ void WorkingMode::setup() {
   
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid.c_str(), password.c_str());
+  uint8_t ttl = 40;
   while (WiFi.status() != WL_CONNECTED) {
+    ttl--;
     Serial.print('.');
     delay(500);
+    if (!ttl) {
+      this->persistenceService->saveMode(ERROR_MODE);
+      return;
+    }
   }
   Serial.println(WiFi.localIP());
   Serial.println(WiFi.broadcastIP());
