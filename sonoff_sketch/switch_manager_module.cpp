@@ -34,6 +34,8 @@ void SwitchManager::loop() {
     this->persistenceService->saveMode(PAIRING_MODE);
     this->isPressed = false;
   }
+
+  this->manageChange();
 }
 
 void SwitchManager::toogle() {
@@ -55,4 +57,12 @@ boolean SwitchManager::isPushed() {
 
 boolean SwitchManager::isNotPushed() {
   return this->buttonState == MIN_BOUND;
+}
+
+void SwitchManager::manageChange() {
+  uint8_t newState = this->persistenceService->readSwitch();
+  if (this->switchValue != newState) {
+    this->switchValue = newState;
+    digitalWrite(RELAY_STATE_PIN, this->switchValue);
+  }
 }

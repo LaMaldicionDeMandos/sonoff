@@ -35,5 +35,6 @@ private:
   void updateButtonStatus();
   boolean isPushed();
   boolean isNotPushed();
+  void manageChange();
 };
 #endif //SWITCh_MANAGER_MODULE_H

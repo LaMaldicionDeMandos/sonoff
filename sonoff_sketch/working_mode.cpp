@@ -15,8 +15,10 @@ void WorkingMode::onChange(char* topic, uint8_t* payload, unsigned int length) {
 
   if (length == 2 && (char)payload[0] == 'o' && (char)payload[1] == 'n') {
     Serial.println("SET ON");
+    this->persistenceService->saveSwitch(H);
   } else if (length == 3 && (char)payload[0] == 'o' && (char)payload[1] == 'f' && (char)payload[2] == 'f') {
     Serial.println("SET OFF");
+    this->persistenceService->saveSwitch(L);
   } else {
     Serial.println("SET ERROR");
   }
