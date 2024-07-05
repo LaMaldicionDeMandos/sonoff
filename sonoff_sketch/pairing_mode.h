@@ -10,11 +10,11 @@
 
 #include <ArduinoJson.h>
 
-#include "asyncTask.h"
 #include "sonoff_mode.h"
 #include "board_constants.h"
 #include "persisten_service.h"
 #include "utils.h"
+#include "pairing_leds_scene.h"
 
 using namespace std;
 
@@ -27,8 +27,8 @@ class PairingMode : public SonoffMode {
 public:
   PairingMode(PersistenceService* persistenceService);
 private:
-  AsyncTask* task;
   PersistenceService* persistenceService;
+  PairingLedsScene ledsScene;  
 
 public:
   void setup() override;
