@@ -129,8 +129,8 @@ void WorkingMode::reconnect() {
 }
 
 void WorkingMode::setup() {
-  Serial.println("Setup Working Mode"); 
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_H);
+  Serial.println("Setup Working Mode");
+  Leds::on_green();
 
   const String ssid = this->getSSID();
   Serial.println("SSID: " + ssid);

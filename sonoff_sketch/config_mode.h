@@ -10,11 +10,11 @@
 
 #include <ArduinoJson.h>
 
-#include "asyncTask.h"
 #include "sonoff_mode.h"
 #include "board_constants.h"
 #include "persisten_service.h"
 #include "utils.h"
+#include "config_leds_scene.h"
 
 using namespace std;
 
@@ -25,8 +25,8 @@ class ConfigMode : public SonoffMode {
 public:
   ConfigMode(PersistenceService* persistenceService);
 private:
-  AsyncTask* task;
   PersistenceService* persistenceService;
+  ConfigLedsScene ledsScene;
 
 public:
   void setup() override;
@@ -34,7 +34,6 @@ public:
   void end() override;
 
 private:
-  void initLoop();
   void handleHttpHealth(AsyncWebServerRequest *request);
   void handlePost(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
   String getSSID();

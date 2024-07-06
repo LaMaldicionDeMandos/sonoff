@@ -2,16 +2,6 @@
 
 AsyncWebServer server(CONFIG_SERVER_PORT);
 
-void wait_config_mode() {}
-
-void on_c() {
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_H);
-}
-
-void off_c() {
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
-}
-
 String getSettingPropertyConfigMode(PersistenceService* persistenceService, String propertyName) {
   const String networkSetting = persistenceService->readNetConfig();
   JsonDocument doc;
@@ -75,23 +65,8 @@ void ConfigMode::setup() {
   Serial.println("HTTP server started");
 }
 
-void ConfigMode::initLoop() {
-  digitalWrite(STATE_OUTPUT_RED_PIN, LED_L);
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, LED_L);
-
-  AsyncTask* on700 = new AsyncTask(700, on_c);
-  AsyncTask* off1400 = new AsyncTask(700, off_c);
-
-  on700->concat(off1400);
-
-  this->task = on700;
-  this->task->start();
-}
-
 void ConfigMode::loop() {
-  if(this->task != nullptr) this->task = this->task->update(); 
-  else this->initLoop();
+  ledsScene.loop();
 }
 
 void ConfigMode::end() {
