@@ -4,11 +4,11 @@
 #include <arduino.h>
 #include <stdint.h>
 
-#include "asyncTask.h"
 #include "sonoff_mode.h"
 #include "board_constants.h"
 #include "persisten_service.h"
 #include "utils.h"
+#include "error_leds_scene.h"
 
 using namespace std;
 
@@ -17,8 +17,8 @@ class ErrorMode : public SonoffMode {
 public:
   ErrorMode(PersistenceService* persistenceService);
 private:
-  AsyncTask* task;
   PersistenceService* persistenceService;
+  ErrorLedsScene ledsScene;
 
 public:
   void setup() override;

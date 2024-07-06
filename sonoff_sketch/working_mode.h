@@ -13,6 +13,7 @@
 #include "sonoff_mode.h"
 #include "board_constants.h"
 #include "persisten_service.h"
+#include "leds.h"
 
 using namespace std;
 
