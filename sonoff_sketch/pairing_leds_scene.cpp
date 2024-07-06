@@ -2,10 +2,6 @@
 
 PairingLedsScene::PairingLedsScene() {}
 
-void PairingLedsScene::setup() {
-  Leds::reset();
-}
-
 void PairingLedsScene::initLoop() {
   Leds::reset();
 
@@ -26,9 +22,4 @@ void PairingLedsScene::initLoop() {
 
   this->task = on100;
   this->task->start();  
-}
-
-void PairingLedsScene::loop() {
-  if(this->task != nullptr) this->task = this->task->update(); 
-  else this->initLoop();
 }

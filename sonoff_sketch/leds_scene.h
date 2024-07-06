@@ -12,11 +12,14 @@
 using namespace std;
 
 class LedsScene {
-private:
+protected:
+  AsyncTask* task;
 
 public:
-  virtual void setup() = 0;
-  virtual void loop() = 0;
+  void loop();
+
+protected:
+  virtual void initLoop() = 0;
 
 private:
 };

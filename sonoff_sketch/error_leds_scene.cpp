@@ -2,10 +2,6 @@
 
 ErrorLedsScene::ErrorLedsScene() {}
 
-void ErrorLedsScene::setup() {
-  Leds::reset();
-}
-
 void ErrorLedsScene::initLoop() {  
   Leds::reset();
 
@@ -16,9 +12,4 @@ void ErrorLedsScene::initLoop() {
 
   this->task = on500;
   this->task->start();  
-}
-
-void ErrorLedsScene::loop() {
-  if(this->task != nullptr) this->task = this->task->update(); 
-  else this->initLoop();
 }

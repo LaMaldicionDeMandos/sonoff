@@ -9,14 +9,8 @@ class DiscoveryLedsScene : public LedsScene {
 
 public:
   DiscoveryLedsScene();
-private:
-  AsyncTask* task;
-
-public:
-  void setup() override;
-  void loop() override;
 
 private:
-  void initLoop();
+  void initLoop() override;
 };
 #endif //DISCOVERY_LEDS_SCENE_H

@@ -2,10 +2,6 @@
 
 DiscoveryLedsScene::DiscoveryLedsScene() {}
 
-void DiscoveryLedsScene::setup() {
-  Leds::reset();
-}
-
 void DiscoveryLedsScene::initLoop() {  
   Leds::reset();
 
@@ -15,10 +11,5 @@ void DiscoveryLedsScene::initLoop() {
   on500->concat(off1000);
 
   this->task = on500;
-  this->task->start();  
-}
-
-void DiscoveryLedsScene::loop() {
-  if(this->task != nullptr) this->task = this->task->update(); 
-  else this->initLoop();
+  this->task->start();
 }

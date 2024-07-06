@@ -9,14 +9,8 @@ class PairingLedsScene : public LedsScene {
 
 public:
   PairingLedsScene();
-private:
-  AsyncTask* task;
-
-public:
-  void setup() override;
-  void loop() override;
 
 private:
-  void initLoop();
+  void initLoop() override;
 };
 #endif //PAIRING_LEDS_SCENE_H

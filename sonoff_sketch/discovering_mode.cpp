@@ -50,7 +50,6 @@ void DiscoveringMode::setup() {
   }
   Serial.println(WiFi.localIP());
   Serial.println(WiFi.broadcastIP());
-  this->ledsScene.setup();
 }
 
 void DiscoveringMode::loop() {

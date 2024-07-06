@@ -9,14 +9,8 @@ class ConfigLedsScene : public LedsScene {
 
 public:
   ConfigLedsScene();
-private:
-  AsyncTask* task;
-
-public:
-  void setup() override;
-  void loop() override;
 
 private:
-  void initLoop();
+  void initLoop() override;
 };
 #endif //CONFIG_LEDS_SCENE_H

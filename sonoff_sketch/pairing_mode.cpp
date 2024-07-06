@@ -31,7 +31,6 @@ void PairingMode::setup() {
   });
   serverPairing.begin();
   Serial.println("HTTP server started");
-  this->ledsScene.setup();
 }
 
 void PairingMode::loop() {
