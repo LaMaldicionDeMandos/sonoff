@@ -14,6 +14,7 @@
 #include "sonoff_mode.h"
 #include "board_constants.h"
 #include "persisten_service.h"
+#include "discovery_leds_scene.h"
 
 using namespace std;
 
@@ -22,9 +23,9 @@ class DiscoveringMode : public SonoffMode {
 public:
   DiscoveringMode(PersistenceService* persistenceService);
 private:
-  AsyncTask* task;
   AsyncTask* broadcastTask;
   PersistenceService* persistenceService;
+  DiscoveryLedsScene ledsScene;  
 
 public:
   void setup() override;
@@ -32,7 +33,6 @@ public:
   void end() override;
 
 private:
-  void initLoop();
   void handleRoot();
   String getSSID();
   String getPassword();

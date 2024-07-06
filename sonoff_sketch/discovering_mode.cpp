@@ -4,14 +4,6 @@ WiFiUDP Udp;
 
 char packetBuffer[255];
 
-void on_d() {
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_H);
-}
-
-void off_d() {
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
-}
-
 void broadcastWait() {
 }
 
@@ -58,26 +50,11 @@ void DiscoveringMode::setup() {
   }
   Serial.println(WiFi.localIP());
   Serial.println(WiFi.broadcastIP());
-
-}
-
-void DiscoveringMode::initLoop() {
-  digitalWrite(STATE_OUTPUT_RED_PIN, LED_L);
-  digitalWrite(STATE_OUTPUT_GREEN_PIN, LED_L);
-  digitalWrite(STATE_OUTPUT_BLUE_PIN, LED_L);
-
-  AsyncTask* on500 = new AsyncTask(500, on_d);
-  AsyncTask* off1000 = new AsyncTask(500, off_d);
-
-  on500->concat(off1000);
-
-  this->task = on500;
-  this->task->start();  
+  this->ledsScene.setup();
 }
 
 void DiscoveringMode::loop() {
-  if(this->task != nullptr) this->task = this->task->update(); 
-  else this->initLoop();
+  ledsScene.loop();
   this->broadcastLoop();
 }
 

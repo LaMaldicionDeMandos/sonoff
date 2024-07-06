@@ -36,7 +36,6 @@ public:
   void end() override;
 
 private:
-  void initLoop();
   void handleRoot(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
 };
 #endif //PAIRING_MODE_H
